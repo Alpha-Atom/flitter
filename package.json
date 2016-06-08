@@ -4,7 +4,9 @@
   "description": "Twitter clone",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d lib",
+    "start": "npm run build && node lib/index.js"
   },
   "repository": {
     "type": "git",
@@ -17,7 +19,14 @@
   },
   "homepage": "https://github.com/Alpha-Atom/flitter#readme",
   "dependencies": {
+    "babel-cli": "^6.9.0",
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.15.1",
-    "express": "^4.13.4"
+    "email-validator": "^1.0.4",
+    "express": "^4.13.4",
+    "ioredis": "^2.0.1"
+  },
+  "devDependencies": {
+    "babel-preset-es2015": "^6.9.0"
   }
 }

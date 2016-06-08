@@ -3,4 +3,4 @@ const hello = (req, res) => {
   res.send('<title>Hello ' + name + '!</title>' + 'Hello ' + name + "!")
 }
 
-module.exports = hello
+export default hello

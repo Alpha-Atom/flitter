@@ -1,6 +1,8 @@
-const express = require("express")
-const router = require("./routes/router.js")
-const bodyParser = require('body-parser')
+import express from 'express'
+import router from './routes/router.js'
+import { createUser } from './controllers/users.js'
+import bodyParser from 'body-parser'
+
 const app = express()
 
 app.use(function(req, res, next) {
@@ -14,5 +16,10 @@ app.use(bodyParser.urlencoded({ extended: true })) // for parsing application/x-
 app.use("/", router)
 
 app.listen(3000, () => console.log("Listening on port 3000."))
+
+createUser('test@email.com', 'test', 'password').then(function (res) {
+  console.log(res)
+})
+
 
 process.on('SIGINT', () => process.exit(0))
