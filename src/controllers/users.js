@@ -8,7 +8,7 @@ const createUser = (email, username, password) => {
   const usernameLower = username.toLowerCase()
   const validEmail = validate(email)
 
-  return userExists(usernameLower, email).then(function (result) {
+  return userExists(usernameLower, email).then((result) => {
     const userKey = 'user:' + usernameLower
     if (result === false && validEmail === true) {
       const hash = hashSync(password)
@@ -41,7 +41,7 @@ const authUser = (username, password) => {
   const usernameLower = username.toLowerCase()
   const userKey = 'user:' + usernameLower
 
-  return redis.hgetall(userKey).then(function (result) {
+  return redis.hgetall(userKey).then((result) => {
     if (result.username === usernameLower) {
       const passwordMatch = compareSync(password, result.password)
       if (passwordMatch === true) {
@@ -69,7 +69,7 @@ const userExists = (username, email) => {
   const usernameLower = username.toLowerCase()
   const userKey = 'user:' + usernameLower
 
-  return redis.hgetall(userKey).then(function (result) {
+  return redis.hgetall(userKey).then((result) => {
     const doesExist = (!!result.password && result.email === email.toLowerCase())
     return doesExist
   }).catch(function (e) {

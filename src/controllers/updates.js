@@ -6,9 +6,9 @@ import { InvalidAuthenticationKeyError, PostTooLongError } from '../utils/errors
 const postUpdate = (username, auth, messageContent) => {
   const usernameLower = username.toLowerCase()
 
-  return userFromAuth(auth).then(function (expectedUsername) {
+  return userFromAuth(auth).then((expectedUsername) => {
     if (expectedUsername === usernameLower) {
-      if (messageContent <= 140) {
+      if (messageContent.length <= 140) {
         const currentTime = Date.now()
         const postKey = 'update:' + usernameLower + ':' + currentTime
         const postObject = {
@@ -23,9 +23,7 @@ const postUpdate = (username, auth, messageContent) => {
     } else {
       throw new InvalidAuthenticationKeyError()
     }
-  }).catch(function (e) {
-    return responseObject(e.statusCode, e.message)
-  })
+  }).catch(e => responseObject(e.statusCode, e.message))
 }
 
 export { postUpdate }
