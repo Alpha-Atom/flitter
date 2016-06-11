@@ -26,4 +26,18 @@ const PostTooLongError = () => {
 PostTooLongError.prototype = Object.create(Error.prototype)
 PostTooLongError.prototype.constructor = PostTooLongError
 
-export { ResponseObjectCreationError, InvalidAuthenticationKeyError }
+const UserNotFoundError = () => {
+  this.message = 'Could not find a user by that name.'
+  this.name = 'UserNotFoundError'
+  this.stack = (new Error()).stack
+  this.statusCode = 404
+}
+
+UserNotFoundError.prototype = Object.create(Error.prototype)
+UserNotFoundError.prototype.constructor = PostTooLongError
+
+export {
+  ResponseObjectCreationError,
+  InvalidAuthenticationKeyError,
+  PostTooLongError,
+  UserNotFoundError }

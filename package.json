@@ -24,7 +24,9 @@
     "body-parser": "^1.15.1",
     "email-validator": "^1.0.4",
     "express": "^4.13.4",
-    "ioredis": "^2.0.1"
+    "faker": "^3.1.0",
+    "ioredis": "^2.0.1",
+    "node-uuid": "file:node_modules/node-uuid"
   },
   "devDependencies": {
     "babel-preset-es2015": "^6.9.0"

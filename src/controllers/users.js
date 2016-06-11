@@ -8,7 +8,7 @@ const createUser = (email, username, password) => {
   const usernameLower = username.toLowerCase()
   const validEmail = validate(email)
 
-  return userExists(usernameLower, email).then((result) => {
+  return userEmailExists(usernameLower, email).then((result) => {
     const userKey = 'user:' + usernameLower
     if (result === false && validEmail === true) {
       const hash = hashSync(password)
@@ -19,7 +19,9 @@ const createUser = (email, username, password) => {
           email: email,
           username: usernameLower,
           password: hash,
-          authKey: authKey
+          authKey: authKey,
+          following: JSON.stringify([]),
+          followers: JSON.stringify([])
         }
         redis.set(authRedis, usernameLower)
         redis.hmset(userKey, userObject)
@@ -65,7 +67,7 @@ const authUser = (username, password) => {
   })
 }
 
-const userExists = (username, email) => {
+const userEmailExists = (username, email) => {
   const usernameLower = username.toLowerCase()
   const userKey = 'user:' + usernameLower
 
@@ -78,6 +80,10 @@ const userExists = (username, email) => {
   })
 }
 
+const userExists = (user) => {
+  return redis.hgetall('user:' + user.toLowerCase()).then((r) => !!r.password)
+}
+
 const userFromAuth = auth => redis.get('auth:' + auth)
 
-export { userExists, createUser, authUser, userFromAuth }
+export { userEmailExists, userExists, createUser, authUser, userFromAuth }
