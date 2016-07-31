@@ -1,7 +1,7 @@
 import redis from 'ioredis'
 import { userFromAuth, userExists } from 'users.js'
 import { responseObject } from '../utils/objects.js'
-import { InvalidAuthenticationKeyError, UserNotFoundError } from '../utils/errors.js'
+import { RequestProcessingError } from '../utils/errors.js'
 
 const follow = (userOrigin, userTarget, auth) => {
   const userOriginLower = userOrigin.toLowerCase()
@@ -20,12 +20,13 @@ const follow = (userOrigin, userTarget, auth) => {
         const followers = redis.hget(targKey, 'followers')
         return Promise.all([following, followers])
       } else {
-        throw new UserNotFoundError()
+        throw new RequestProcessingError(404, 'User not found.')
       }
     } else {
-      throw new InvalidAuthenticationKeyError()
+      throw new RequestProcessingError(401, 'Failed to authenticate user')
     }
-  }).then((results) => {
+  })
+  .then((results) => {
     const following = JSON.stringify(results[0])
     const followers = JSON.stringify(results[1])
     following.push(userTargetLower)
@@ -33,9 +34,9 @@ const follow = (userOrigin, userTarget, auth) => {
     redis.hset(userKey, 'following', following)
     redis.hset(targKey, 'followers', followers)
     return redis.hgetall(userKey)
-  }).then((result) => {
-    return responseObject(200, result)
-  }).catch(e => responseObject(e.statusCode, e.message))
+  })
+  .then(r => responseObject(200, r))
+  .catch(e => responseObject(e.statusCode, e.message))
 }
 
 export { follow }

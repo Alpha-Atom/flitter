@@ -2,7 +2,7 @@ import redis from '../redis/redis-client.js'
 import uuid from 'node-uuid'
 import { userFromAuth } from './users.js'
 import { responseObject } from '../utils/objects.js'
-import { InvalidAuthenticationKeyError, PostTooLongError } from '../utils/errors.js'
+import { RequestProcessingError } from '../utils/errors.js'
 
 const postUpdate = (username, auth, messageContent) => {
   const usernameLower = username.toLowerCase()
@@ -21,10 +21,10 @@ const postUpdate = (username, auth, messageContent) => {
         redis.hmset(postKey, postObject)
         return postObject
       } else {
-        throw new PostTooLongError()
+        throw new RequestProcessingError(413, 'The post was too long')
       }
     } else {
-      throw new InvalidAuthenticationKeyError()
+      throw new RequestProcessingError(401, 'Failed to authenticate user')
     }
   }).catch(e => responseObject(e.statusCode, e.message))
 }

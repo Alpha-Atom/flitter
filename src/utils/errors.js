@@ -1,4 +1,4 @@
-const ResponseObjectCreationError = () => {
+const ResponseObjectCreationError = function () {
   this.message = 'Failed to create response object.'
   this.name = 'ResponseObjectCreationError'
   this.stack = (new Error()).stack
@@ -6,38 +6,14 @@ const ResponseObjectCreationError = () => {
 ResponseObjectCreationError.prototype = Object.create(Error.prototype)
 ResponseObjectCreationError.prototype.constructor = ResponseObjectCreationError
 
-const InvalidAuthenticationKeyError = () => {
-  this.message = 'Failed to authenticate user'
-  this.name = 'InvalidAuthenticationKeyError'
+const RequestProcessingError = function (statusCode, reason) {
+  this.message = reason
+  this.name = 'RequestProcessingError'
   this.stack = (new Error()).stack
-  this.statusCode = 401
+  this.statusCode = statusCode
 }
 
-InvalidAuthenticationKeyError.prototype = Object.create(Error.prototype)
-InvalidAuthenticationKeyError.prototype.constructor = InvalidAuthenticationKeyError
+RequestProcessingError.prototype = Object.create(Error.prototype)
+RequestProcessingError.prototype.constructor = RequestProcessingError
 
-const PostTooLongError = () => {
-  this.message = 'The post was too long to be stored'
-  this.name = 'PostTooLongError'
-  this.stack = (new Error()).stack
-  this.statusCode = 413
-}
-
-PostTooLongError.prototype = Object.create(Error.prototype)
-PostTooLongError.prototype.constructor = PostTooLongError
-
-const UserNotFoundError = () => {
-  this.message = 'Could not find a user by that name.'
-  this.name = 'UserNotFoundError'
-  this.stack = (new Error()).stack
-  this.statusCode = 404
-}
-
-UserNotFoundError.prototype = Object.create(Error.prototype)
-UserNotFoundError.prototype.constructor = PostTooLongError
-
-export {
-  ResponseObjectCreationError,
-  InvalidAuthenticationKeyError,
-  PostTooLongError,
-  UserNotFoundError }
+export { ResponseObjectCreationError, RequestProcessingError }

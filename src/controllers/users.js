@@ -1,8 +1,9 @@
+import redis from '../redis/redis-client.js'
+import generate from '../utils/auth.js'
 import { validate } from 'email-validator'
 import { hashSync, compareSync } from 'bcrypt-nodejs'
 import { responseObject } from '../utils/objects.js'
-import redis from '../redis/redis-client.js'
-import generate from '../utils/auth.js'
+import { RequestProcessingError } from '../utils/errors.js'
 
 const createUser = (email, username, password) => {
   const usernameLower = username.toLowerCase()
@@ -27,16 +28,16 @@ const createUser = (email, username, password) => {
         redis.hmset(userKey, userObject)
         return responseObject(200, userObject)
       } else {
-        return responseObject(500, 'Error when hashing password.')
+        throw new RequestProcessingError(500, 'Error when hashing password.')
       }
     } else if (result === true) {
-      return responseObject(409, 'User or email already in use.')
+      throw new RequestProcessingError(409, 'User or email already in use.')
     } else if (validEmail === false) {
-      return responseObject(422, 'Email is invalid.')
+      throw new RequestProcessingError(422, 'Email is invalid.')
     } else {
-      return responseObject(500, 'Database error.')
+      throw new RequestProcessingError(500, 'Database error.')
     }
-  })
+  }).catch(e => responseObject(e.statusCode, e.message))
 }
 
 const authUser = (username, password) => {
@@ -68,11 +69,12 @@ const authUser = (username, password) => {
 }
 
 const userEmailExists = (username, email) => {
+  console.log(username, email)
   const usernameLower = username.toLowerCase()
   const userKey = 'user:' + usernameLower
 
   return redis.hgetall(userKey).then((result) => {
-    const doesExist = (!!result.password && result.email === email.toLowerCase())
+    const doesExist = (!!result.password || result.email === email.toLowerCase())
     return doesExist
   }).catch(function (e) {
     console.error('Error getting user key.')
@@ -80,9 +82,8 @@ const userEmailExists = (username, email) => {
   })
 }
 
-const userExists = (user) => {
-  return redis.hgetall('user:' + user.toLowerCase()).then((r) => !!r.password)
-}
+const userExists = (user) => redis.hgetall('user:' + user.toLowerCase())
+                                  .then((r) => !!r.password)
 
 const userFromAuth = auth => redis.get('auth:' + auth)
 
